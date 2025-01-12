@@ -109,8 +109,8 @@ function runStrategy(
   addressDetails: AddressDetails
 ): boolean {
   if (strategy.areConditionsValidForAlert(address, addressDetails)) {
-    const embed = getEmbed(address, addressDetails, strategy.filterMentions);
-    sendMessage(strategy.alertChannelId, address, embed);
+    // const embed = getEmbed(address, addressDetails, strategy.filterMentions);
+    // sendMessage(strategy.alertChannelId, address, embed);
     return true;
   }
   return false;
