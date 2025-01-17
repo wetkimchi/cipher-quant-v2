@@ -23,7 +23,7 @@ npm run start
 NOTE: When running on a remote server, you can run the service in the background using the following command:
 
 ```bash
-nohup npm run start &
+nohup npm run start > output.log 2> error.log &
 ```
 
 ## Management on Remote Server
