@@ -60,7 +60,7 @@ NOTE: We want to run only one instance of the service.
 To stop an instance, you can use the following command:
 
 ```bash
-kill <pid>
+kill -9 <pid>
 ```
 
 Where `<pid>` is the PID of the instance you want to stop. It can be found in the output of above command.
