@@ -42,6 +42,8 @@ export async function fetchTokenInfo(
 
     const data: TokenInfoResponse = await res.json();
 
+    if (!data.data.attributes) return null;
+
     return {
       name: data.data.attributes.name,
       symbol: data.data.attributes.symbol,
