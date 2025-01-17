@@ -25,7 +25,7 @@ function filterMentions(mentions: Mention[]) {
   );
 }
 
-export const HighConvictionAlerts: Strategy = {
+export const FiveXSmWallet: Strategy = {
   displayName: DISPLAY_NAME,
   alertChannelId: ALERT_CHANNEL_ID,
   areConditionsValidForAlert,

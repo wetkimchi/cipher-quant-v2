@@ -1,11 +1,6 @@
-import { HighConvictionAlerts } from "./high-conviction-alerts";
-import { CaAlertBot } from "./ca-alert-bot";
-import { TwoXSocialSmWalletBot } from "./2x-social-sm-wallet-bot";
-import { ThreeXAlphaFollowTest } from "./3x-alpha-follow-test";
+import { FiveXSmWallet } from "./5x-sm-wallet";
+import { EarlyAlpha } from "./early-alpha";
+import { HighConviction } from "./high-conviction";
+import { SmartFollowers } from "./smart-followers";
 
-export {
-  HighConvictionAlerts,
-  CaAlertBot,
-  TwoXSocialSmWalletBot,
-  ThreeXAlphaFollowTest,
-};
+export { FiveXSmWallet, EarlyAlpha, HighConviction, SmartFollowers };

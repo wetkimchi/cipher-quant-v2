@@ -28,7 +28,7 @@ function filterMentions(mentions: Mention[]) {
   );
 }
 
-export const CaAlertBot: Strategy = {
+export const EarlyAlpha: Strategy = {
   displayName: DISPLAY_NAME,
   alertChannelId: ALERT_CHANNEL_ID,
   areConditionsValidForAlert,

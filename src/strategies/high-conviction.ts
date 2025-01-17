@@ -76,7 +76,7 @@ function filterMentions(mentions: Mention[]) {
   );
 }
 
-export const TwoXSocialSmWalletBot: Strategy = {
+export const HighConviction: Strategy = {
   displayName: DISPLAY_NAME,
   alertChannelId: ALERT_CHANNEL_ID,
   areConditionsValidForAlert,
