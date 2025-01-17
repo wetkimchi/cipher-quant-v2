@@ -23,7 +23,7 @@ npm run start
 NOTE: When running on a remote server, you can run the service in the background using the following command:
 
 ```bash
-nohup npm run start > output.log 2> error.log &
+nohup ./run.sh > out.log 2> err.log &
 ```
 
 ## Management on Remote Server
@@ -31,28 +31,28 @@ nohup npm run start > output.log 2> error.log &
 To check if the service is running, you can use the following command:
 
 ```bash
-ps aux | grep npm
+ps aux | grep run.sh
 ```
 
 The output should look like this:
 
 ```bash
-bike4sa+    5898  0.0  1.7 1109916 61944 pts/0   Sl   09:51   0:00 npm run start
-bike4sa+    5958  0.0  0.0   7152  2180 pts/0    S+   09:56   0:00 grep --color=auto npm
+bike4sa+   11805  0.0  0.1   7832  3584 pts/0    S    18:46   0:00 /bin/bash ./run.sh
+bike4sa+   11850  0.0  0.0   7156  2276 pts/0    S+   18:47   0:00 grep --color=auto run.sh
 ```
 
 If the service is not running, the output will be something like this:
 
 ```bash
-bike4sa+    5958  0.0  0.0   7152  2180 pts/0    S+   09:56   0:00 grep --color=auto npm
+bike4sa+   11850  0.0  0.0   7156  2276 pts/0    S+   18:47   0:00 grep --color=auto run.sh
 ```
 
 If multiple instances of the service are running, the output will be something like this:
 
 ```bash
-bike4sa+    5898  0.0  1.7 1109916 61944 pts/0   Sl   09:51   0:00 npm run start
-bike4sa+    5899  0.0  1.7 1109916 61944 pts/0   Sl   09:51   0:00 npm run start
-bike4sa+    5958  0.0  0.0   7152  2180 pts/0    S+   09:56   0:00 grep --color=auto npm
+bike4sa+   11805  0.0  0.1   7832  3584 pts/0    S    18:46   0:00 /bin/bash ./run.sh
+bike4sa+   11805  0.0  0.1   7832  3584 pts/0    S    18:46   0:00 /bin/bash ./run.sh
+bike4sa+   11850  0.0  0.0   7156  2276 pts/0    S+   18:47   0:00 grep --color=auto run.sh
 ```
 
 NOTE: We want to run only one instance of the service.
@@ -69,7 +69,13 @@ For example, above it is 5898
 Following command is helpful when reading logs:
 
 ```bash
-tail -n 100 nohup.out
+tail -n 100 out.log
 ```
 
 This will show the last 100 lines of the `nohup.out` file. To see different lines, you can change the number.
+
+```bash
+tail -f out.log
+```
+
+To view live logs, you can use the above command.
