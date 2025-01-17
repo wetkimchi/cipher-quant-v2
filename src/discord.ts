@@ -29,12 +29,18 @@ async function sendMessage(
   address: string,
   embed: EmbedBuilder
 ) {
-  const targetChannel = await client.channels.fetch(targetChannelId);
-  if (targetChannel instanceof TextChannel) {
-    await targetChannel.send({
-      content: `${address}`,
-      embeds: [embed],
-    });
+  try {
+    const targetChannel = await client.channels.fetch(targetChannelId);
+    if (targetChannel instanceof TextChannel) {
+      await targetChannel.send({
+        content: `${address}`,
+        embeds: [embed],
+      });
+    }
+  } catch (error) {
+    logger.error("Error sending message:", error);
+    logger.error("Retrying in 5 seconds...");
+    setTimeout(sendMessage, 5000, targetChannelId, address, embed);
   }
 }
 
