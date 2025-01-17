@@ -6,11 +6,14 @@ import { TopDegenWalletsChannel } from "../channels/top-degen-wallets";
 import { getBuyersForToken } from "../utils/nansen";
 
 const ALERT_CHANNEL_ID = "1325616722706829312";
-
-const DISPLAY_NAME = "2x_Social_SM_Wallet_Bot";
+const PREV_DISPLAY_NAME = "2x_Social_SM_Wallet_Bot";
+const DISPLAY_NAME = "High_Conviction";
 
 function areConditionsValidForAlert(address: string, details: AddressDetails) {
-  const lastAlertTime = details.strategiesLastAlertTime?.[DISPLAY_NAME];
+  const lastAlertTime =
+    details.strategiesLastAlertTime?.[DISPLAY_NAME] ??
+    details.strategiesLastAlertTime?.[PREV_DISPLAY_NAME];
+
   // if we have alerted in the last 6 hours, we don't want to alert again
   if (lastAlertTime && Date.now() - lastAlertTime < 60 * 60 * 6 * 1000)
     return false;

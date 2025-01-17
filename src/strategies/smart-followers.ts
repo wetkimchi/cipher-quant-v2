@@ -1,7 +1,8 @@
 import { MoniXSmartAlphaChannel } from "../channels/moni-x-smart-alpha";
 
 const ALERT_CHANNEL_ID = "1323921538331836446";
-const DISPLAY_NAME = "3x_Alpha_Follow_Test";
+const DISPLAY_NAME = "Smart_Followers";
+
 function areConditionsValidForAlert(_: string, details: AddressDetails) {
   const moniXMentions = details.mentions.filter(
     (mention) =>
