@@ -10,10 +10,9 @@
 npm install
 ```
 
-It requires a `.env` file with the following variables:
+It requires a `.env` file with the following variable:
 
 - `DISCORD_TOKEN`
-- `SEND_TARGET_CHANNEL_ID`
 
 ## Run
 

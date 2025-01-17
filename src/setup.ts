@@ -24,7 +24,7 @@ global.logger = pino({
 // DOTENV
 import dotenv from "dotenv";
 dotenv.config();
-if (!process.env.DISCORD_TOKEN || !process.env.SEND_TARGET_CHANNEL_ID) {
-  logger.error("DISCORD_TOKEN or SEND_TARGET_CHANNEL_ID is not set");
+if (!process.env.DISCORD_TOKEN) {
+  logger.error("DISCORD_TOKEN is not set");
   process.exit(1);
 }
