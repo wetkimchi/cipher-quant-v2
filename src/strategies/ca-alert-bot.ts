@@ -5,6 +5,7 @@ const DISPLAY_NAME = "Ca_Alert_Bot";
 function areConditionsValidForAlert(address: string, details: AddressDetails) {
   const lastAlertTime = details.strategiesLastAlertTime?.[DISPLAY_NAME];
 
+  // last alert time should be more than 1 hour ago
   if (lastAlertTime && Date.now() - lastAlertTime < 60 * 60 * 1000)
     return false;
 
