@@ -10,10 +10,10 @@ import { getMention } from "./message/get-mention";
 import { getEmbed } from "./message/embed/get-embed";
 import { fetchPrice } from "./api";
 import {
-  HighConvictionAlerts,
-  CaAlertBot,
-  TwoXSocialSmWalletBot,
-  ThreeXAlphaFollowTest,
+  HighConviction,
+  EarlyAlpha,
+  FiveXSmWallet,
+  SmartFollowers,
 } from "./strategies";
 
 client.on("messageCreate", async (message: Message) => {
@@ -29,14 +29,14 @@ client.on("messageCreate", async (message: Message) => {
     return;
   }
 
-  const strategies = [];
+  const strategies = [HighConviction];
   if (message.channel.id === RodFusWalletsChannel.channelId) {
-    strategies.push(HighConvictionAlerts);
+    strategies.push(FiveXSmWallet);
   } else {
-    strategies.push(CaAlertBot, TwoXSocialSmWalletBot);
+    strategies.push(EarlyAlpha);
 
     if (message.channel.id === MoniXSmartAlphaChannel.channelId) {
-      strategies.push(ThreeXAlphaFollowTest);
+      strategies.push(SmartFollowers);
     }
   }
   try {

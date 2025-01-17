@@ -1,6 +1,7 @@
 import { MoniCuratedTokensChannel } from "../channels/moni-curated-tokens";
 import { MoniRawTokensChannel } from "../channels/moni-raw-tokens";
 import { MoniXSmartAlphaChannel } from "../channels/moni-x-smart-alpha";
+import { RodFusWalletsChannel } from "../channels/rod-fus-wallets";
 import { SolMicrocapAlertsChannel } from "../channels/sol-microcap-alerts";
 import { TopDegenWalletsChannel } from "../channels/top-degen-wallets";
 import { getBuyersForToken } from "../utils/nansen";
@@ -42,27 +43,28 @@ function areConditionsValidForAlert(address: string, details: AddressDetails) {
     topDegenWalletsMentions
   ).length;
 
+  const rodFusWalletsMentions = details.mentions.filter(
+    (mention) => mention.channelId === RodFusWalletsChannel.channelId
+  );
+  const rodFusWalletsCount = getBuyersForToken(
+    address,
+    rodFusWalletsMentions
+  ).length;
+
+  const degenBuys = topDegenWalletsCount + rodFusWalletsCount;
+
   // 2 follow + 2 buys
-  if (moniXSmartCount >= 2 && topDegenWalletsCount >= 2) return true;
+  if (moniXSmartCount >= 2 && degenBuys >= 2) return true;
 
   // 1 follow + 1 raw + 2 buys
-  if (moniXSmartCount >= 1 && moniRawCount >= 1 && topDegenWalletsCount >= 2)
-    return true;
+  if (moniXSmartCount >= 1 && moniRawCount >= 1 && degenBuys >= 2) return true;
 
   // 1 follow + 1 curated + 2 buys
-  if (
-    moniXSmartCount >= 1 &&
-    moniCuratedCount >= 1 &&
-    topDegenWalletsCount >= 2
-  )
+  if (moniXSmartCount >= 1 && moniCuratedCount >= 1 && degenBuys >= 2)
     return true;
 
   // 2 follow + 1 microcap + 2 buys
-  if (
-    moniXSmartCount >= 2 &&
-    topDegenWalletsCount >= 1 &&
-    solMicrocapCount >= 1
-  )
+  if (moniXSmartCount >= 2 && solMicrocapCount >= 1 && degenBuys >= 2)
     return true;
 
   return false;
@@ -75,7 +77,8 @@ function filterMentions(mentions: Mention[]) {
       mention.channelId === MoniRawTokensChannel.channelId ||
       mention.channelId === MoniCuratedTokensChannel.channelId ||
       mention.channelId === SolMicrocapAlertsChannel.channelId ||
-      mention.channelId === TopDegenWalletsChannel.channelId
+      mention.channelId === TopDegenWalletsChannel.channelId ||
+      mention.channelId === RodFusWalletsChannel.channelId
   );
 }
 
