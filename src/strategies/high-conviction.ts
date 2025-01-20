@@ -54,7 +54,7 @@ function areConditionsValidForAlert(address: string, details: AddressDetails) {
   const degenBuys = topDegenWalletsCount + rodFusWalletsCount;
 
   // 2 follow + 2 buys
-  if (moniXSmartCount >= 2 && degenBuys >= 2) return true;
+  if (moniXSmartCount >= 1 && degenBuys >= 2) return true;
 
   // 1 follow + 1 raw + 2 buys
   if (moniXSmartCount >= 1 && moniRawCount >= 1 && degenBuys >= 2) return true;
@@ -64,7 +64,7 @@ function areConditionsValidForAlert(address: string, details: AddressDetails) {
     return true;
 
   // 2 follow + 1 microcap + 2 buys
-  if (moniXSmartCount >= 2 && solMicrocapCount >= 1 && degenBuys >= 2)
+  if (moniXSmartCount >= 1 && solMicrocapCount >= 1 && degenBuys >= 2)
     return true;
 
   return false;
