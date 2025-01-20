@@ -19,7 +19,7 @@ function areConditionsValidForAlert(address: string, details: AddressDetails) {
 
   const walletAddresses = getBuyersForToken(address, rodFusMentions);
 
-  return walletAddresses.length >= 6;
+  return walletAddresses.length >= 5;
 }
 
 function filterMentions(mentions: Mention[]) {
