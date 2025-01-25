@@ -54,17 +54,17 @@ function areConditionsValidForAlert(address: string, details: AddressDetails) {
   const degenBuys = topDegenWalletsCount + rodFusWalletsCount;
 
   // 2 follow + 2 buys
-  if (moniXSmartCount >= 1 && degenBuys >= 2) return true;
+  if (moniXSmartCount >= 2 && degenBuys >= 2) return true;
 
-  // 1 follow + 1 raw + 2 buys
-  if (moniXSmartCount >= 1 && moniRawCount >= 1 && degenBuys >= 2) return true;
+  // 1 follow + 1 raw + 1 buys
+  if (moniXSmartCount >= 1 && moniRawCount >= 1 && degenBuys >= 1) return true;
 
-  // 1 follow + 1 curated + 2 buys
-  if (moniXSmartCount >= 1 && moniCuratedCount >= 1 && degenBuys >= 2)
+  // 1 follow + 1 curated + 1 buys
+  if (moniXSmartCount >= 1 && moniCuratedCount >= 1 && degenBuys >= 1)
     return true;
 
-  // 2 follow + 1 microcap + 2 buys
-  if (moniXSmartCount >= 1 && solMicrocapCount >= 1 && degenBuys >= 2)
+  // 1 follow + 2 buys
+  if (moniXSmartCount >= 1 && degenBuys >= 2)
     return true;
 
   return false;
