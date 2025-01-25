@@ -10,14 +10,14 @@ function areConditionsValidForAlert(address: string, details: AddressDetails) {
     details.strategiesLastAlertTime?.[PREV_DISPLAY_NAME];
 
   // last alert time should be more than 1 hour ago
-  if (lastAlertTime && Date.now() - lastAlertTime < 60 * 60 * 1000)
+  if (lastAlertTime && Date.now() - lastAlertTime < 60 * 120 * 1000)
     return false;
 
   const mentions = details.mentions.filter(
     (mention) => mention.channelId !== RodFusWalletsChannel.channelId
   );
 
-  if (mentions.length >= 2) {
+  if (mentions.length >= 1) {
     logger.debug(`Alerting for ${address}`);
     return true;
   }
