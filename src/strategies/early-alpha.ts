@@ -10,7 +10,7 @@ function areConditionsValidForAlert(address: string, details: AddressDetails) {
     details.strategiesLastAlertTime?.[PREV_DISPLAY_NAME];
 
   // last alert time should be more than 2 hours ago
-  if (lastAlertTime && Date.now() - lastAlertTime < 60 * 240 * 1000)
+  if (lastAlertTime && Date.now() - lastAlertTime < 60 * 60 * 2 * 1000)
     return false;
 
   const mentions = details.mentions.filter(
