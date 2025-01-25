@@ -15,8 +15,8 @@ function areConditionsValidForAlert(address: string, details: AddressDetails) {
     details.strategiesLastAlertTime?.[DISPLAY_NAME] ??
     details.strategiesLastAlertTime?.[PREV_DISPLAY_NAME];
 
-  // if we have alerted in the last 6 hours, we don't want to alert again
-  if (lastAlertTime && Date.now() - lastAlertTime < 60 * 60 * 6 * 1000)
+  // if we have alerted in the last 2 hours, we don't want to alert again
+  if (lastAlertTime && Date.now() - lastAlertTime < 60 * 60 * 2 * 1000)
     return false;
 
   const moniXSmartCount = details.mentions.filter(
