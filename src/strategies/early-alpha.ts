@@ -17,7 +17,7 @@ function areConditionsValidForAlert(address: string, details: AddressDetails) {
     (mention) => mention.channelId !== RodFusWalletsChannel.channelId
   );
 
-  if (mentions.length >= 1) {
+  if (mentions.length >= 2) {
     logger.debug(`Alerting for ${address}`);
     return true;
   }
