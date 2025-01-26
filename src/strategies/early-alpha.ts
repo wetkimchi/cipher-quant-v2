@@ -9,8 +9,8 @@ function areConditionsValidForAlert(address: string, details: AddressDetails) {
     details.strategiesLastAlertTime?.[DISPLAY_NAME] ??
     details.strategiesLastAlertTime?.[PREV_DISPLAY_NAME];
 
-  // last alert time should be more than 2 hours ago
-  if (lastAlertTime && Date.now() - lastAlertTime < 60 * 60 * 2 * 1000)
+  // last alert time should be more than 1 hour ago
+  if (lastAlertTime && Date.now() - lastAlertTime < 60 * 60 * 1000)
     return false;
 
   const mentions = details.mentions.filter(
@@ -32,9 +32,14 @@ function filterMentions(mentions: Mention[]) {
   );
 }
 
+function getMessage(address: string, details: AddressDetails) {
+  return address;
+}
+
 export const EarlyAlpha: Strategy = {
   displayName: DISPLAY_NAME,
   alertChannelId: ALERT_CHANNEL_ID,
   areConditionsValidForAlert,
   filterMentions,
+  getMessage,
 };

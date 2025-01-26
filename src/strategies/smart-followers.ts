@@ -5,9 +5,6 @@ const DISPLAY_NAME = "Smart_Followers";
 
 function areConditionsValidForAlert(_: string, details: AddressDetails) {
   const moniXMentions = details.mentions.filter(
-    (mention) =>
-      mention.channelId === MoniXSmartAlphaChannel.channelId &&
-      Date.now() - mention.timestamp <= 60 * 60 * 1000
     (mention) => mention.channelId === MoniXSmartAlphaChannel.channelId
   );
 
@@ -20,9 +17,14 @@ function filterMentions(mentions: Mention[]) {
   );
 }
 
+function getMessage(address: string, details: AddressDetails) {
+  return address;
+}
+
 export const SmartFollowers: Strategy = {
   displayName: DISPLAY_NAME,
   alertChannelId: ALERT_CHANNEL_ID,
   areConditionsValidForAlert,
   filterMentions,
+  getMessage,
 };

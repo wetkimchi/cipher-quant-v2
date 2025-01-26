@@ -1,8 +1,15 @@
 // GLOGAL LOGGER
 import pino from "pino";
+import * as fs from 'fs';
 
 declare global {
   var logger: pino.Logger;
+}
+
+// Ensure logs directory exists
+if (!fs.existsSync('./logs')) {
+  console.log('Creating logs directory...');
+  fs.mkdirSync('./logs');
 }
 
 global.logger = pino({

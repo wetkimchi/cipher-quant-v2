@@ -6,4 +6,5 @@ type Strategy = {
     details: AddressDetails
   ) => boolean;
   filterMentions: (mentions: Mention[]) => Mention[];
+  getMessage: (address: string, details: AddressDetails) => string;
 };

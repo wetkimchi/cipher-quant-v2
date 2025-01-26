@@ -28,9 +28,14 @@ function filterMentions(mentions: Mention[]) {
   );
 }
 
+function getMessage(address: string, details: AddressDetails) {
+  return address;
+}
+
 export const FiveXSmWallet: Strategy = {
   displayName: DISPLAY_NAME,
   alertChannelId: ALERT_CHANNEL_ID,
   areConditionsValidForAlert,
   filterMentions,
+  getMessage,
 };

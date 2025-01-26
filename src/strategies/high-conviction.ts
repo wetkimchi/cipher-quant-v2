@@ -15,8 +15,8 @@ function areConditionsValidForAlert(address: string, details: AddressDetails) {
     details.strategiesLastAlertTime?.[DISPLAY_NAME] ??
     details.strategiesLastAlertTime?.[PREV_DISPLAY_NAME];
 
-  // if we have alerted in the last 2 hours, we don't want to alert again
-  if (lastAlertTime && Date.now() - lastAlertTime < 60 * 60 * 2 * 1000)
+  // if we have alerted in the last 6 hours, we don't want to alert again
+  if (lastAlertTime && Date.now() - lastAlertTime < 60 * 60 * 6 * 1000)
     return false;
 
   const moniXSmartCount = details.mentions.filter(
@@ -53,14 +53,18 @@ function areConditionsValidForAlert(address: string, details: AddressDetails) {
 
   const degenBuys = topDegenWalletsCount + rodFusWalletsCount;
 
-  // 1 follow + 2 buys
-  if (moniXSmartCount >= 2 && degenBuys >= 2) return true;
+  // 2 follow + 2 buys
+  if (moniXSmartCount >= 1 && degenBuys >= 2) return true;
 
-  // 1 raw + 2 buys
-  if (moniRawCount >= 1 && degenBuys >= 2) return true;
+  // 1 follow + 1 raw + 2 buys
+  if (moniXSmartCount >= 1 && moniRawCount >= 1 && degenBuys >= 2) return true;
 
-  // 1 curated + 2 buys
-  if (moniCuratedCount >= 1 && degenBuys >= 2)
+  // 1 follow + 1 curated + 2 buys
+  if (moniXSmartCount >= 1 && moniCuratedCount >= 1 && degenBuys >= 2)
+    return true;
+
+  // 2 follow + 1 microcap + 2 buys
+  if (moniXSmartCount >= 1 && solMicrocapCount >= 1 && degenBuys >= 2)
     return true;
 
   return false;
@@ -78,9 +82,14 @@ function filterMentions(mentions: Mention[]) {
   );
 }
 
+function getMessage(address: string, details: AddressDetails) {
+  return address;
+}
+
 export const HighConviction: Strategy = {
   displayName: DISPLAY_NAME,
   alertChannelId: ALERT_CHANNEL_ID,
   areConditionsValidForAlert,
   filterMentions,
+  getMessage,
 };

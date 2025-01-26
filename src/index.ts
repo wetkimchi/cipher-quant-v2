@@ -14,7 +14,21 @@ import {
   EarlyAlpha,
   FiveXSmWallet,
   SmartFollowers,
+  KimchiTestNew,
 } from "./strategies";
+
+// Add immediate console logs for debugging
+console.log('Starting application...');
+// Add process-level error handlers
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  process.exit(1);
+});
 
 client.on("messageCreate", async (message: Message) => {
   // Ignore messages from this bot
@@ -29,7 +43,7 @@ client.on("messageCreate", async (message: Message) => {
     return;
   }
 
-  const strategies = [HighConviction];
+  const strategies = [HighConviction, KimchiTestNew];
   if (message.channel.id === RodFusWalletsChannel.channelId) {
     strategies.push(FiveXSmWallet);
   } else {
@@ -110,7 +124,8 @@ function runStrategy(
 ): boolean {
   if (strategy.areConditionsValidForAlert(address, addressDetails)) {
     const embed = getEmbed(address, addressDetails, strategy.filterMentions);
-    sendMessage(strategy.alertChannelId, address, embed);
+    const message:string = strategy.getMessage(address, addressDetails);
+    sendMessage(strategy.alertChannelId, message, embed);
     return true;
   }
   return false;
