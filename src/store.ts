@@ -23,7 +23,16 @@ export class Store {
       : new Map();
   }
 
+  private ensureBackupDirectoryExists() {
+    const dir = './backup';
+    if (!fs.existsSync(dir)) {
+      logger.info('Creating backup directory...');
+      fs.mkdirSync(dir);
+    }
+  }
+
   private setupIntervals() {
+    this.ensureBackupDirectoryExists();
     // Add locks to prevent concurrent access during cleanup/backup
     setInterval(async () => {
       await this.cleanOldEntries();

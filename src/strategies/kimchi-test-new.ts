@@ -11,45 +11,34 @@ const DISPLAY_NAME = "Kimchi_Test";
 
 function areConditionsValidForAlert(address: string, details: AddressDetails) {
     const lastAlertTime = details.strategiesLastAlertTime?.[DISPLAY_NAME];
-
-    // if we have alerted in the last 24 hours, we don't want to alert again
-    if (lastAlertTime && Date.now() - lastAlertTime < 60 * 60 * 24 * 1000)
-    return false;
     return true;
 }
 
 function filterMentions(mentions: Mention[]) {
   return mentions.filter(
     (mention) =>
-      mention.channelId === RodFusWalletsChannel.channelId ||
-      mention.channelId === TopDegenWalletsChannel.channelId
+      mention.channelId === RodFusWalletsChannel.channelId
   );
 }
 
 function getMessage(address: string, details: AddressDetails) {
-  const rodFusWalletsMentions = details.mentions.filter(
-    (mention) => mention.channelId === RodFusWalletsChannel.channelId
+    const rodFusWalletsMentions = details.mentions.filter(
+        (mention) => mention.channelId === RodFusWalletsChannel.channelId
     );
 
-    const topDegenWalletsMentions = details.mentions.filter(
-    (mention) => mention.channelId === TopDegenWalletsChannel.channelId
-    );
-
-    // check if address has been mentioned in the last 24 hours
+        // check if address has been mentioned in the last 24 hours
     const rufusMentionsInLast24Hours = rodFusWalletsMentions.filter(
-    (mention) => Date.now() - mention.timestamp < 60 * 60 * 24 * 1000
-    ).length;
+        (mention) => Date.now() - mention.timestamp < 60 * 60 * 24 * 1000
+    );
 
-    const topDegenMentionsInLast24Hours = topDegenWalletsMentions.filter(
-    (mention) => Date.now() - mention.timestamp < 60 * 60 * 24 * 1000
-    ).length;
-    if (rufusMentionsInLast24Hours + topDegenMentionsInLast24Hours === 0) {
-        return "🌱";
-    } else if (rufusMentionsInLast24Hours + topDegenMentionsInLast24Hours > 1) {
-      return "🔁" + " (" + rufusMentionsInLast24Hours+ topDegenMentionsInLast24Hours + ")";
+    if (rufusMentionsInLast24Hours.length === 1) {
+        return "🌱 (since 24hrs ago)";
+    } else if (rufusMentionsInLast24Hours.length > 1) {
+      return "🔁" + "  (" + (rufusMentionsInLast24Hours.length) + ")";
     }
-    logger.error("Unexpected mention sum");
-    return ""
+
+    logger.error(`Unexpected mention sum: rufus=${rufusMentionsInLast24Hours}`);
+    return "❓";
 }
 
 export const KimchiTestNew: Strategy = {
