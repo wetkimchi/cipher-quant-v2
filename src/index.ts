@@ -33,9 +33,10 @@ client.on("messageCreate", async (message: Message) => {
     return;
   }
 
-  const strategies = [HighConviction, KimchiTestNew];
+  const strategies = [HighConviction];
   if (message.channel.id === RodFusWalletsChannel.channelId) {
     strategies.push(FiveXSmWallet);
+    strategies.push(KimchiTestNew);
   } else {
     strategies.push(EarlyAlpha);
 
