@@ -11,6 +11,7 @@ const DISPLAY_NAME = "Kimchi_Test";
 
 function areConditionsValidForAlert(address: string, details: AddressDetails) {
     const lastAlertTime = details.strategiesLastAlertTime?.[DISPLAY_NAME];
+    logger.info("Alerting for kimchi test");
     return true;
 }
 
@@ -37,7 +38,7 @@ function getMessage(address: string, details: AddressDetails) {
       return "🔁" + "  (" + (rufusMentionsInLast24Hours.length) + ")";
     }
 
-    logger.error(`Unexpected mention sum: rufus=${rufusMentionsInLast24Hours}`);
+    logger.error(`Unexpected mention sum: rufus=${rufusMentionsInLast24Hours.length}`);
     return "❓";
 }
 

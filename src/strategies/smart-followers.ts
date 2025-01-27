@@ -5,7 +5,9 @@ const DISPLAY_NAME = "Smart_Followers";
 
 function areConditionsValidForAlert(_: string, details: AddressDetails) {
   const moniXMentions = details.mentions.filter(
-    (mention) => mention.channelId === MoniXSmartAlphaChannel.channelId
+    (mention) =>
+      mention.channelId === MoniXSmartAlphaChannel.channelId &&
+      Date.now() - mention.timestamp <= 60 * 60 * 1000
   );
 
   return moniXMentions.length >= 3;

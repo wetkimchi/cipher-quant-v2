@@ -19,16 +19,6 @@ import {
 
 // Add immediate console logs for debugging
 console.log('Starting application...');
-// Add process-level error handlers
-process.on('uncaughtException', (error) => {
-  console.error('Uncaught Exception:', error);
-  process.exit(1);
-});
-
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-  process.exit(1);
-});
 
 client.on("messageCreate", async (message: Message) => {
   // Ignore messages from this bot
