@@ -11,7 +11,7 @@ const DISPLAY_NAME = "Kimchi_Test";
 
 function areConditionsValidForAlert(address: string, details: AddressDetails) {
     const lastAlertTime = details.strategiesLastAlertTime?.[DISPLAY_NAME];
-    logger.info("Alerting for kimchi test");
+    logger.info(`Alerting for ${address}`);
     return true;
 }
 
