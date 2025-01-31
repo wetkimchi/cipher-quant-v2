@@ -2,6 +2,7 @@ import { RodFusWalletsChannel } from "../channels/rod-fus-wallets";
 import { getBuyersForToken } from "../utils/nansen";
 
 const ALERT_CHANNEL_ID = "1320089662617948250";
+const ALERT_TEST_CHANNEL_ID = "1333948301682409673";
 const PREV_DISPLAY_NAME = "High_Conviction_Alerts";
 const DISPLAY_NAME = "5x_SM_Wallet";
 
@@ -29,13 +30,31 @@ function filterMentions(mentions: Mention[]) {
 }
 
 function getMessage(address: string, details: AddressDetails) {
-  return address;
+  const alertCount = details.strategyAlertCount?.[DISPLAY_NAME] ?? 0;
+  if (alertCount == 0) {
+    return `🌱 ${details.info?.symbol}`;
+  } else if (alertCount > 0) {
+    return `🔁 ${details.info?.symbol} (${alertCount})`;
+  }
+  logger.error(`Unexpected alert count: alertCount=${alertCount}`);
+  return "❓";
+}
+
+function getAlertChannelId() {
+  const isTestMode = process.env.TEST_MODE === "true";
+  if (isTestMode) {
+    logger.info(`Test mode. Using ${ALERT_TEST_CHANNEL_ID} for ${DISPLAY_NAME}`);
+    return ALERT_TEST_CHANNEL_ID;
+  }
+  return ALERT_CHANNEL_ID;
 }
 
 export const FiveXSmWallet: Strategy = {
   displayName: DISPLAY_NAME,
   alertChannelId: ALERT_CHANNEL_ID,
+  alertTestChannelId: ALERT_TEST_CHANNEL_ID,
   areConditionsValidForAlert,
   filterMentions,
   getMessage,
+  getAlertChannelId,
 };

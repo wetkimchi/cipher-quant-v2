@@ -10,10 +10,11 @@ export type Channel = {
   channelId: string;
   displayName: string;
   extractAddresses: (message: Message) => string[];
+  extractBuySizes?: (message: Message) => number[];
   getDetails?: (mention: Mention) => string[];
 };
 
-export const channels: Record<string, Channel> = {
+export const rawChannels: Record<string, Channel> = {
   [SolMicrocapAlertsChannel.channelId]: SolMicrocapAlertsChannel,
   [TopDegenWalletsChannel.channelId]: TopDegenWalletsChannel,
   [RodFusWalletsChannel.channelId]: RodFusWalletsChannel,
@@ -22,4 +23,4 @@ export const channels: Record<string, Channel> = {
   [MoniXSmartAlphaChannel.channelId]: MoniXSmartAlphaChannel,
 };
 
-export const channelIds = Object.keys(channels);
+export const channelIds = Object.keys(rawChannels);

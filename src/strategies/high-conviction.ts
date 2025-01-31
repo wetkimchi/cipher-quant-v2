@@ -7,6 +7,7 @@ import { TopDegenWalletsChannel } from "../channels/top-degen-wallets";
 import { getBuyersForToken } from "../utils/nansen";
 
 const ALERT_CHANNEL_ID = "1325616722706829312";
+const ALERT_TEST_CHANNEL_ID = "1333948509023633500";
 const PREV_DISPLAY_NAME = "2x_Social_SM_Wallet_Bot";
 const DISPLAY_NAME = "High_Conviction";
 
@@ -83,13 +84,31 @@ function filterMentions(mentions: Mention[]) {
 }
 
 function getMessage(address: string, details: AddressDetails) {
-  return address;
+  const alertCount = details.strategyAlertCount?.[DISPLAY_NAME] ?? 0;
+  if (alertCount == 0) {
+    return `🌱 ${details.info?.symbol}`;
+  } else if (alertCount > 0) {
+    return `🔁 ${details.info?.symbol} (${alertCount})`;
+  }
+  logger.error(`Unexpected alert count: alertCount=${alertCount}`);
+  return "❓";
+}
+
+function getAlertChannelId() {
+  const isTestMode = process.env.TEST_MODE === "true";
+  if (isTestMode) {
+    logger.info(`Test mode. Using ${ALERT_TEST_CHANNEL_ID} for ${DISPLAY_NAME}`);
+    return ALERT_TEST_CHANNEL_ID;
+  }
+  return ALERT_CHANNEL_ID;
 }
 
 export const HighConviction: Strategy = {
   displayName: DISPLAY_NAME,
   alertChannelId: ALERT_CHANNEL_ID,
+  alertTestChannelId: ALERT_TEST_CHANNEL_ID,
   areConditionsValidForAlert,
   filterMentions,
   getMessage,
+  getAlertChannelId
 };

@@ -11,7 +11,9 @@ type Mention = {
 type Address = string;
 interface AddressDetails {
   lastTouched: number;
+  purchaseSize: number | null;
   strategiesLastAlertTime?: Record<string, number>;
+  strategyAlertCount?: Record<string, number>;
   info: TokenInfo | null;
   mentions: Mention[];
   lastPrice: { price: string; fdv: string } | null;

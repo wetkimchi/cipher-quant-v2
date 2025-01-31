@@ -24,7 +24,7 @@ export function getEmbed(
 
   const priceDescription = `Price  |  ${
     addressDetails.lastPrice?.price ?? "N/A"
-  } \n FDV    |  ${formatNumber(addressDetails.lastPrice?.fdv ?? "N/A")}`;
+  } \n FDV    |  ${formatNumber(addressDetails.lastPrice?.fdv ?? "N/A")} \n Amount   |  $${(addressDetails.purchaseSize ?? "N/A")}`;
   embed.setDescription(`${priceDescription} \n\n ${description}\n\n`);
 
   embed.addFields(getFields(filterMentions(addressDetails.mentions)));

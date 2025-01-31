@@ -3,7 +3,7 @@ import { Message } from "discord.js";
 import { mainStore, Store } from "./store";
 import { client, sendMessage } from "./discord";
 import { getAddressInfo, getMessageLink } from "./utils";
-import { channelIds, channels } from "./channels";
+import { channelIds, rawChannels } from "./channels";
 import { RodFusWalletsChannel } from "./channels/rod-fus-wallets";
 import { MoniXSmartAlphaChannel } from "./channels/moni-x-smart-alpha";
 import { getMention } from "./message/get-mention";
@@ -38,10 +38,10 @@ client.on("messageCreate", async (message: Message) => {
     strategies.push(FiveXSmWallet);
     strategies.push(KimchiTestNew);
   } else {
-    strategies.push(EarlyAlpha);
+    // strategies.push(EarlyAlpha);
 
     if (message.channel.id === MoniXSmartAlphaChannel.channelId) {
-      strategies.push(SmartFollowers);
+      // strategies.push(SmartFollowers);
     }
   }
   try {
@@ -57,7 +57,8 @@ async function onMessage(
   strategies: Strategy[]
 ) {
   const latestMention = getMention(message);
-  const _addresses = channels[message.channel.id].extractAddresses(message);
+  const _addresses = rawChannels[message.channel.id].extractAddresses(message);
+  const purchaseSizes = rawChannels[message.channel.id].extractBuySizes?.(message) ?? [];
   const uniqueAddresses = [...new Set(_addresses)];
   logger.info(
     `Found ${uniqueAddresses.length} addresses in message ${getMessageLink(
@@ -72,9 +73,11 @@ async function onMessage(
   );
   await store.acquireLock();
 
-  for (const address of uniqueAddresses) {
+  for (let i = 0; i < uniqueAddresses.length; i++) {
+    const address = uniqueAddresses[i];
     const prevMatch = store.get(address);
     const addressDetails: AddressDetails = {
+      purchaseSize: purchaseSizes[i] || null,
       lastTouched: Date.now(),
       info: await getAddressInfo(address, prevMatch),
       mentions: [latestMention, ...(prevMatch?.mentions || [])],
@@ -90,6 +93,14 @@ async function onMessage(
         addressDetails.strategiesLastAlertTime = {
           ...addressDetails.strategiesLastAlertTime,
           [strategy.displayName]: Date.now(),
+        };
+        // Reset count to 1 if last alert was more than 24 hours ago
+        const lastAlertTime = addressDetails.strategiesLastAlertTime[strategy.displayName] || 0;
+        const hoursSinceLastAlert = (Date.now() - lastAlertTime) / (1000 * 60 * 60);
+        
+        addressDetails.strategyAlertCount = {
+          ...addressDetails.strategyAlertCount || {},
+          [strategy.displayName]: hoursSinceLastAlert > 24 ? 1 : (addressDetails.strategyAlertCount?.[strategy.displayName] || 0) + 1
         };
       } else {
         logger.info(
@@ -116,7 +127,7 @@ function runStrategy(
   if (strategy.areConditionsValidForAlert(address, addressDetails)) {
     const embed = getEmbed(address, addressDetails, strategy.filterMentions);
     const message:string = strategy.getMessage(address, addressDetails);
-    sendMessage(strategy.alertChannelId, message, embed);
+    sendMessage(strategy.getAlertChannelId(), message, embed);
     return true;
   }
   return false;
