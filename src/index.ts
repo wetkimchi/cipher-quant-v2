@@ -38,10 +38,10 @@ client.on("messageCreate", async (message: Message) => {
     strategies.push(FiveXSmWallet);
     strategies.push(KimchiTestNew);
   } else {
-    // strategies.push(EarlyAlpha);
+    strategies.push(EarlyAlpha);
 
     if (message.channel.id === MoniXSmartAlphaChannel.channelId) {
-      // strategies.push(SmartFollowers);
+      strategies.push(SmartFollowers);
     }
   }
   try {
