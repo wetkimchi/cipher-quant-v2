@@ -61,10 +61,11 @@ function getAlertChannelId() {
 }
 
 function getPurchaseSizeSymbol(purchaseSize: number) {
-  if (purchaseSize < 1000) return "🪱";
-  if (purchaseSize < 60000) return "🐛";
-  if (purchaseSize < 150000) return "🦋";
-  return "🌏";
+  // if (purchaseSize < 1000) return "🪱";
+  // if (purchaseSize < 60000) return "🐛";
+  // if (purchaseSize < 150000) return "🦋";
+  // return "🌏";
+  return "";
 }
 
 export const KimchiTestNew: Strategy = {
