@@ -83,6 +83,7 @@ async function onMessage(
       mentions: [latestMention, ...(prevMatch?.mentions || [])],
       lastPrice: await fetchPrice("solana", address),
       strategiesLastAlertTime: prevMatch?.strategiesLastAlertTime || {},
+      strategyAlertCount: prevMatch?.strategyAlertCount || {},
     };
 
     for (const strategy of strategies) {
