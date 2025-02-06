@@ -1,5 +1,5 @@
 import "./setup";
-import { Message } from "discord.js";
+import { Embed, Message } from "discord.js";
 import { mainStore, Store } from "./store";
 import { client, sendMessage } from "./discord";
 import { getAddressInfo, getMessageLink } from "./utils";
@@ -15,6 +15,7 @@ import {
   FiveXSmWallet,
   SmartFollowers,
   KimchiTestNew,
+  DailyPNL,
 } from "./strategies";
 
 // Add immediate console logs for debugging
@@ -33,15 +34,16 @@ client.on("messageCreate", async (message: Message) => {
     return;
   }
 
-  const strategies = [HighConviction];
+  // const strategies = [HighConviction];
+  const strategies = [DailyPNL];
   if (message.channel.id === RodFusWalletsChannel.channelId) {
-    strategies.push(FiveXSmWallet);
-    strategies.push(KimchiTestNew);
+    // strategies.push(FiveXSmWallet);
+    // strategies.push(KimchiTestNew);
   } else {
-    strategies.push(EarlyAlpha);
+    // strategies.push(EarlyAlpha);
 
     if (message.channel.id === MoniXSmartAlphaChannel.channelId) {
-      strategies.push(SmartFollowers);
+      // strategies.push(SmartFollowers);
     }
   }
   try {

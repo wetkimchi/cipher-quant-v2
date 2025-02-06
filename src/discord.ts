@@ -5,6 +5,8 @@ import {
   TextChannel,
 } from "discord.js";
 
+import { DailyPNL } from "./strategies/daily-pnl";
+
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -32,10 +34,10 @@ async function sendMessage(
   try {
     const targetChannel = await client.channels.fetch(targetChannelId);
     if (targetChannel instanceof TextChannel) {
-      await targetChannel.send({
-        content: `${address}`,
-        embeds: [embed],
-      });
+      const messageOptions = targetChannelId === DailyPNL.alertChannelId
+      ? { content: `${address}` } // No embed for daily PNL channel
+      : { content: `${address}`, embeds: [embed] }; 
+      await targetChannel.send(messageOptions);
     }
   } catch (error) {
     logger.error("Error sending message:", error);
