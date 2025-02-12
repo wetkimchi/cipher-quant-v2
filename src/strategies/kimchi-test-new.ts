@@ -13,13 +13,11 @@ const ALERT_TEST_CHANNEL_ID = "1332027281471963197";
 const DISPLAY_NAME = "Kimchi_Test";
 
 function areConditionsValidForAlert(address: string, details: AddressDetails) {
-    const lastAlertTime = details.strategiesLastAlertTime?.[DISPLAY_NAME];
-    const alertCount = details.strategyAlertCount?.[DISPLAY_NAME] ?? 0;
-    
-    // Only alert new buys and every 2 repeat buys
-    // NOTE: the update of the store.json is performed after the condition check
-    // We want to alert if there is no value in the store.json (new buy) or if value is odd (every 2 repeat buys)
-    return alertCount === 0 || (alertCount % 2 === 1);
+  const mentionCount = details.mentions.filter(
+    (mention) => mention.channelId == RodFusWalletsChannel.channelId
+  ).length;
+
+  return mentionCount%2 === 1 || mentionCount === 2;
 }
 
 function filterMentions(mentions: Mention[]) {

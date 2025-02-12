@@ -91,17 +91,18 @@ async function onMessage(
         logger.info(
           `${message.id}: 🔒 LOCKED: ${address}: ${strategy.displayName}: ✅ ALERTED`
         );
-        addressDetails.strategiesLastAlertTime = {
-          ...addressDetails.strategiesLastAlertTime,
-          [strategy.displayName]: Date.now(),
-        };
         // Reset count to 1 if last alert was more than 24 hours ago
-        const lastAlertTime = addressDetails.strategiesLastAlertTime[strategy.displayName] || 0;
+        const lastAlertTime = addressDetails.strategiesLastAlertTime?.[strategy.displayName] || 0;
         const hoursSinceLastAlert = (Date.now() - lastAlertTime) / (1000 * 60 * 60);
         
         addressDetails.strategyAlertCount = {
           ...addressDetails.strategyAlertCount || {},
           [strategy.displayName]: hoursSinceLastAlert > 24 ? 1 : (addressDetails.strategyAlertCount?.[strategy.displayName] || 0) + 1
+        };
+
+        addressDetails.strategiesLastAlertTime = {
+          ...addressDetails.strategiesLastAlertTime,
+          [strategy.displayName]: Date.now(),
         };
       } else {
         logger.info(
