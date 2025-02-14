@@ -17,7 +17,9 @@ function areConditionsValidForAlert(address: string, details: AddressDetails) {
     (mention) => mention.channelId == RodFusWalletsChannel.channelId
   ).length;
 
-  return mentionCount%2 === 1 || mentionCount === 2;
+  const isAlert = mentionCount%2 === 1 || mentionCount === 2;
+
+  return isAlert;
 }
 
 function filterMentions(mentions: Mention[]) {
@@ -27,26 +29,16 @@ function filterMentions(mentions: Mention[]) {
   );
 }
 
+
 function getMessage(address: string, details: AddressDetails) {
-    const rodFusWalletsMentions = details.mentions.filter(
-        (mention) => mention.channelId === RodFusWalletsChannel.channelId
-    );
-
-        // check if address has been mentioned in the last 24 hours
-    const rufusMentionsInLast24Hours = rodFusWalletsMentions.filter(
-        (mention) => Date.now() - mention.timestamp < 60 * 60 * 24 * 1000
-    );
-
-    const purchaseSizeSymbol = getPurchaseSizeSymbol(details.purchaseSize ?? 0);
-
-    if (rufusMentionsInLast24Hours.length === 1) {
-        return `🌱 ${details.info?.symbol} ${purchaseSizeSymbol}`;
-    } else if (rufusMentionsInLast24Hours.length > 1) {
-      return `🔁 (${rufusMentionsInLast24Hours.length}) ${details.info?.symbol} ${purchaseSizeSymbol}`;
-    }
-
-    logger.error(`Unexpected mention sum: rufus=${rufusMentionsInLast24Hours.length}`);
-    return "❓";
+  const alertCount = details.strategyAlertCount?.[DISPLAY_NAME] ?? 0;
+  if (alertCount == 0) {
+    return `🌱 ${details.info?.symbol}`;
+  } else if (alertCount > 0) {
+    return `🔁(${alertCount}) ${details.info?.symbol}`;
+  }
+  logger.error(`Unexpected alert count: alertCount=${alertCount}`);
+  return "❓";
 }
 
 function getAlertChannelId() {

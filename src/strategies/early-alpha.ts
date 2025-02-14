@@ -40,7 +40,7 @@ function getMessage(address: string, details: AddressDetails) {
   if (alertCount == 0) {
     return `🌱 ${details.info?.symbol}`;
   } else if (alertCount > 0) {
-    return `🔁 ${details.info?.symbol} (${alertCount})`;
+    return `🔁(${alertCount}) ${details.info?.symbol}`;
   }
   logger.error(`Unexpected alert count: alertCount=${alertCount}`);
   return "❓";

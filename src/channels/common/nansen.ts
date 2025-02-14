@@ -5,9 +5,7 @@ import { Message } from "discord.js";
  */
 export function extractAddresses(messsage: Message): string[] {
   const embed = messsage.embeds[0];
-  logger.info(`Extracting addresses from embed: ${embed}`);
   const description = embed.description;
-  logger.info(`Extracting addresses from description: ${description}`);
   if (!description) return [];
 
   const solanaTokenAddressMatches =
