@@ -57,29 +57,31 @@ async function onMessage(
   strategies: Strategy[]
 ) {
   const latestMention = getMention(message);
-  const _addresses = rawChannels[message.channel.id].extractAddresses(message);
+  const tokenInfos = rawChannels[message.channel.id].extractAddresses(message);
+  // iterate through tokeInfos and aggregate unique entries
+  const uniqueTokenInfos = [...new Set(tokenInfos)];
   const purchaseSizes = rawChannels[message.channel.id].extractBuySizes?.(message) ?? [];
-  const uniqueAddresses = [...new Set(_addresses)];
   logger.info(
-    `Found ${uniqueAddresses.length} addresses in message ${getMessageLink(
+    `Found ${uniqueTokenInfos.length} addresses in message ${getMessageLink(
       latestMention
     )}`
   );
 
-  if (uniqueAddresses.length === 0) return;
+  if (uniqueTokenInfos.length === 0) return;
 
   logger.info(
     `${message.id} 🔓 LOCKING: to process message ++++++++++++++++++++++++++++++++++++++++++++++++++++++`
   );
   await store.acquireLock();
 
-  for (let i = 0; i < uniqueAddresses.length; i++) {
-    const address = uniqueAddresses[i];
+  for (let i = 0; i < uniqueTokenInfos.length; i++) {
+    const tokenInfo = uniqueTokenInfos[i];
+    const address = tokenInfo.CA;
     const prevMatch = store.get(address);
     const addressDetails: AddressDetails = {
       purchaseSize: purchaseSizes[i] || null,
       lastTouched: Date.now(),
-      info: await getAddressInfo(address, prevMatch),
+      info: await getAddressInfo(tokenInfo, prevMatch),
       mentions: [latestMention, ...(prevMatch?.mentions || [])],
       lastPrice: await fetchPrice("solana", address),
       strategiesLastAlertTime: prevMatch?.strategiesLastAlertTime || {},

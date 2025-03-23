@@ -31,12 +31,16 @@ interface PriceResponse {
 }
 
 export async function fetchTokenInfo(
-  network: "base" | "solana",
+  network: "base" | "solana" | "avalanche" | "ethereum" | "UNKNOWN",
   address: string
 ): Promise<TokenInfo | null> {
+  if (network === "UNKNOWN") {
+    logger.info(`Unknown network for ${address}`);
+    return null;
+  }
   try {
     const res = await fetch(
-      `${baseApi}/networks/${network}/tokens/${address}/info`
+      `${baseApi}/networks/${getNetwork(network)}/tokens/${address}/info`
     );
     if (!res.ok) return null;
 
@@ -64,12 +68,12 @@ export async function fetchTokenInfo(
 }
 
 export async function fetchPrice(
-  network: "base" | "solana",
+  network: "base" | "solana" | "avalanche" | "ethereum" | "UNKNOWN",
   address: string
 ): Promise<{ price: string; fdv: string } | null> {
   try {
     const res = await fetch(
-      `${baseApi}/networks/${network}/tokens/${address}`,
+      `${baseApi}/networks/${getNetwork(network)}/tokens/${address}`,
       {
         headers: { accept: "application/json" },
       }
@@ -84,7 +88,13 @@ export async function fetchPrice(
       fdv: data.data.attributes.fdv_usd,
     };
   } catch (error) {
-    logger.error(`Error fetching price for ${address}: ${error}`);
+    logger.error(`Error fetching price for ${address} on ${network}: ${error}`);
     return null;
   }
+}
+
+function getNetwork(network: "base" | "solana" | "avalanche" | "ethereum" | "UNKNOWN"): string {
+  if (network === "avalanche") return "avax";
+  if (network === "ethereum") return "eth";
+  return network;
 }

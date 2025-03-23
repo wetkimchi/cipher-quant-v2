@@ -1,4 +1,5 @@
 import { fetchTokenInfo } from "./api";
+import { RawTokenInfo } from "./channels/common/nansen";
 import { isSolanaAddress } from "./regex";
 
 export function getMessageLink(mention: Mention): string {
@@ -10,15 +11,16 @@ export function timeAgo(timestamp: number) {
 }
 
 export async function getAddressInfo(
-  address: string,
+  rawTokenInfo: RawTokenInfo,
   details: AddressDetails | undefined
 ) {
-  if (details?.info) return details.info;
+  if (details?.info) {
+    return details.info;
+  }
 
   const info = await fetchTokenInfo(
-    isSolanaAddress(address) ? "solana" : "base",
-    address
+    isSolanaAddress(rawTokenInfo.CA) ? "solana" : rawTokenInfo.chain,
+    rawTokenInfo.CA
   );
-
   return info;
 }

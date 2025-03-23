@@ -1,15 +1,18 @@
 import { Message } from "discord.js";
 import { getAllAddresses } from "../regex";
+import { RawTokenInfo } from "./common/nansen";
 
 const channelId = "1308956239333560341";
 const displayName = "MONI_RAW_TOKENS";
 
-function extractAddresses(message: Message): string[] {
+function extractAddresses(message: Message): RawTokenInfo[] {
   const embed = message.embeds[0];
   const fields = JSON.stringify(embed.fields);
   const description = embed.description ?? "";
-
-  return [...getAllAddresses(description), ...getAllAddresses(fields)];
+  const addresses = [...getAllAddresses(description), ...getAllAddresses(fields)];
+  return addresses.map((address) => {
+    return { CA: address, type: "buy", chain: "UNKNOWN" };
+  });
 }
 
 export const MoniRawTokensChannel = {

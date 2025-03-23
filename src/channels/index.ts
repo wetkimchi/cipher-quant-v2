@@ -5,11 +5,12 @@ import { RodFusWalletsChannel } from "./rod-fus-wallets";
 import { MoniCuratedTokensChannel } from "./moni-curated-tokens";
 import { MoniRawTokensChannel } from "./moni-raw-tokens";
 import { SolMicrocapAlertsChannel } from "./sol-microcap-alerts";
+import { RawTokenInfo } from "./common/nansen";
 
 export type Channel = {
   channelId: string;
   displayName: string;
-  extractAddresses: (message: Message) => string[];
+  extractAddresses: (message: Message) => RawTokenInfo[];
   extractBuySizes?: (message: Message) => number[];
   getDetails?: (mention: Mention) => string[];
 };
