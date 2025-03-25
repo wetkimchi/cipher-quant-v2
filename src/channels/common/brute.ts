@@ -1,5 +1,5 @@
 import { Message } from "discord.js";
-import { getAllAddresses } from "../../regex";
+import { getAllAddresses, isSolanaAddress } from "../../regex";
 import { RawTokenInfo } from "./nansen";
 
 export function extractAddresses(message: Message): RawTokenInfo[] {
@@ -9,6 +9,6 @@ export function extractAddresses(message: Message): RawTokenInfo[] {
   const embedsAddresses = getAllAddresses(embeds);
   const addresses = [...contentAddresses, ...embedsAddresses];
   return addresses.map((address) => {
-    return { CA: address, type: "buy", chain: "UNKNOWN" };
+    return { CA: address, type: "buy", chain: isSolanaAddress(address) ? "solana" : "UNKNOWN" };
   });
 }

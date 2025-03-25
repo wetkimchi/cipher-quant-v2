@@ -1,5 +1,5 @@
 import { Message } from "discord.js";
-import { getAllAddresses } from "../regex";
+import { getAllAddresses, isSolanaAddress } from "../regex";
 import { RawTokenInfo } from "./common/nansen";
 
 const channelId = "1303048307437736017";
@@ -14,7 +14,7 @@ function extractAddresses(message: Message): RawTokenInfo[] {
   const followedAccountDetails = description.split("**Moni Score**")[0];
   const addresses = [...getAllAddresses(followedAccountDetails)];
   return addresses.map((address) => {
-    return { CA: address, type: "buy", chain: "UNKNOWN" };
+    return { CA: address, type: "buy", chain: isSolanaAddress(address) ? "solana" : "UNKNOWN" };
   });
 }
 
