@@ -14,7 +14,6 @@ export function extractAddresses(message: Message): RawTokenInfo[] {
   const description = embed.description;
   if (!description) return [];
   const addresses = [];
-
   // Regex explanation:
   // ([\s\S]*?)    -> lazily capture any text (the transaction block) before the delimiter
   // :scroll:\s*CA:\s*  -> match the literal delimiter text (with optional whitespace)
@@ -23,7 +22,7 @@ export function extractAddresses(message: Message): RawTokenInfo[] {
   //               -> capture either an Ethereum address (0x followed by 40 hex digits)
   //                  or a Solana address (32 to 44 characters in the given base58 alphabet)
   // `             -> match the closing backtick
-  const regex = /([\s\S]*?):scroll:\s*CA:\s*`(0x[a-fA-F0-9]{40}|[1-9A-HJ-NP-Za-km-z]{32,44})`/gi;
+  const regex = /([\s\S]*?)CA:\s*`(0x[a-fA-F0-9]{40}|[1-9A-HJ-NP-Za-km-z]{32,44})`/gi;
   const tokenInfos = [];
   let match;
   
@@ -36,22 +35,17 @@ export function extractAddresses(message: Message): RawTokenInfo[] {
     const type = /sell/i.test(transactionText) ? "sell" : "buy";
 
     // Try to extract the chain from the transaction text.
-    const chainMatch = transactionText.match(/:chains:\s*Chain:\s*#(\w+)/i);
-    const rawChain = chainMatch ? chainMatch[1].toLowerCase() : "UNKNOWN";
-    
+    const chainMatch = transactionText.match(/Chain:\s*#(\w+)/i);
+    const rawChain = chainMatch ? chainMatch[1].toLowerCase() : "UNKNOWN";    
     // Validate chain type
     const chain = (["base", "solana", "avalanche", "ethereum", "UNKNOWN"].includes(rawChain) 
       ? rawChain 
       : "UNKNOWN") as RawTokenInfo["chain"];
-      
     addresses.push(CA);
     const tokenInfo: RawTokenInfo = { CA, type, chain };
     tokenInfos.push(tokenInfo);
   }
-  logger.info(`Extracted ${tokenInfos.length} token infos:`);
-  for (const tokenInfo of tokenInfos) {
-    logger.info(`CA: ${tokenInfo.CA}, type: ${tokenInfo.type}, chain: ${tokenInfo.chain}`);
-  }
+  logger.info(`Extracted ${tokenInfos.length} token infos`);
   return tokenInfos;
 }
 
