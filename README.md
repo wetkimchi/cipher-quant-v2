@@ -79,3 +79,37 @@ tail -f out.log
 ```
 
 To view live logs, you can use the above command.
+
+## Management using PM2
+
+You can use PM2 to manage the service.
+To see if cipher-quant is running, you can use the following command:
+
+```bash
+pm2 list
+```
+
+The output should look like this:
+```bash
+│ id │ name               │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼────────────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ cipher-quant-v2    │ default     │ 1.0.0   │ fork    │ 2344506  │ 0s     │ 0    │ online    │ 0%       │ 31.5mb   │ bik… │ disabled │
+```
+
+To stop the service, you can use the following command:
+
+```bash
+pm2 stop cipher-quant-v2
+```
+
+To restart the service, you can use the following command:
+
+```bash
+pm2 restart cipher-quant-v2
+```
+
+To view logs, you can use the following command:
+
+```bash
+pm2 logs cipher-quant-v2
+```
