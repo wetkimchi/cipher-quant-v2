@@ -8,7 +8,7 @@ import { RodFusWalletsChannel } from "./channels/rod-fus-wallets";
 import { MoniXSmartAlphaChannel } from "./channels/moni-x-smart-alpha";
 import { getMention } from "./message/get-mention";
 import { getEmbed } from "./message/embed/get-embed";
-import { fetchPrice } from "./api";
+import { fetchPriceWithRetry } from "./api";
 import {
   HighConviction,
   EarlyAlpha,
@@ -83,7 +83,7 @@ async function onMessage(
       lastTouched: Date.now(),
       info: await getAddressInfo(tokenInfo, prevMatch),
       mentions: [latestMention, ...(prevMatch?.mentions || [])],
-      lastPrice: await fetchPrice("solana", address),
+      lastPrice: await fetchPriceWithRetry(address),
       strategiesLastAlertTime: prevMatch?.strategiesLastAlertTime || {},
       strategyAlertCount: prevMatch?.strategyAlertCount || {},
     };

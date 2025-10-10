@@ -4,7 +4,7 @@ import { Message } from "discord.js";
 export interface RawTokenInfo {
   CA: string;
   type: "buy" | "sell";
-  chain: "base" | "solana" | "avalanche" | "ethereum" | "UNKNOWN";
+  chain: "base" | "solana" | "avalanche" | "ethereum" | "bsc" | "UNKNOWN";
 }
 /**
  * Given a nansen url messages this function` will extract all the token addresses and token addresses only
@@ -38,8 +38,8 @@ export function extractAddresses(message: Message): RawTokenInfo[] {
     const chainMatch = transactionText.match(/Chain:\s*#(\w+)/i);
     const rawChain = chainMatch ? chainMatch[1].toLowerCase() : "UNKNOWN";    
     // Validate chain type
-    const chain = (["base", "solana", "avalanche", "ethereum", "UNKNOWN"].includes(rawChain) 
-      ? rawChain 
+    const chain = (["base", "solana", "avalanche", "ethereum", "bsc", "UNKNOWN"].includes(rawChain)
+      ? rawChain
       : "UNKNOWN") as RawTokenInfo["chain"];
     addresses.push(CA);
     const tokenInfo: RawTokenInfo = { CA, type, chain };

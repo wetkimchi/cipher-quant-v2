@@ -1,6 +1,5 @@
-import { fetchTokenInfo } from "./api";
+import { fetchTokenInfoWithRetry } from "./api";
 import { RawTokenInfo } from "./channels/common/nansen";
-import { isSolanaAddress } from "./regex";
 
 export function getMessageLink(mention: Mention): string {
   return `https://discord.com/channels/${mention.guildId}/${mention.channelId}/${mention.messageId}`;
@@ -18,9 +17,6 @@ export async function getAddressInfo(
     return details.info;
   }
 
-  const info = await fetchTokenInfo(
-    isSolanaAddress(rawTokenInfo.CA) ? "solana" : rawTokenInfo.chain,
-    rawTokenInfo.CA
-  );
+  const info = await fetchTokenInfoWithRetry(rawTokenInfo.CA);
   return info;
 }

@@ -31,7 +31,7 @@ interface PriceResponse {
 }
 
 export async function fetchTokenInfo(
-  network: "base" | "solana" | "avalanche" | "ethereum" | "UNKNOWN",
+  network: "base" | "solana" | "avalanche" | "ethereum" | "bsc" | "UNKNOWN",
   address: string
 ): Promise<TokenInfo | null> {
   if (network === "UNKNOWN") {
@@ -68,7 +68,7 @@ export async function fetchTokenInfo(
 }
 
 export async function fetchPrice(
-  network: "base" | "solana" | "avalanche" | "ethereum" | "UNKNOWN",
+  network: "base" | "solana" | "avalanche" | "ethereum" | "bsc" | "UNKNOWN",
   address: string
 ): Promise<{ price: string; fdv: string } | null> {
   try {
@@ -93,8 +93,67 @@ export async function fetchPrice(
   }
 }
 
-function getNetwork(network: "base" | "solana" | "avalanche" | "ethereum" | "UNKNOWN"): string {
+function getNetwork(network: "base" | "solana" | "avalanche" | "ethereum" | "bsc" | "UNKNOWN"): string {
   if (network === "avalanche") return "avax";
   if (network === "ethereum") return "eth";
+  if (network === "bsc") return "bsc";
   return network;
+}
+
+type SupportedNetwork = "base" | "solana" | "avalanche" | "ethereum" | "bsc";
+
+function getNetworkPriority(address: string): SupportedNetwork[] {
+  // Check if it's a Solana address (base58 encoded, 32-44 characters)
+  if (/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(address)) {
+    return ["solana"];
+  }
+
+  // Check if it's an ETH-format address (0x followed by 40 hex characters)
+  if (/^0x[a-fA-F0-9]{40}$/.test(address)) {
+    // For ETH-format addresses, try ETH-compatible networks first
+    return ["ethereum", "bsc", "base", "avalanche"];
+  }
+
+  // For unknown format addresses, try all networks
+  return ["ethereum", "bsc", "base", "avalanche", "solana"];
+}
+
+export async function fetchTokenInfoWithRetry(address: string): Promise<TokenInfo | null> {
+  const networks = getNetworkPriority(address);
+
+  for (const network of networks) {
+    try {
+      logger.info(`Trying to fetch token info for ${address} on ${network}`);
+      const result = await fetchTokenInfo(network, address);
+      if (result) {
+        logger.info(`Successfully fetched token info for ${address} on ${network}`);
+        return result;
+      }
+    } catch (error) {
+      logger.warn(`Failed to fetch token info for ${address} on ${network}: ${error}`);
+    }
+  }
+
+  logger.warn(`Failed to fetch token info for ${address} on all networks: ${networks.join(", ")}`);
+  return null;
+}
+
+export async function fetchPriceWithRetry(address: string): Promise<{ price: string; fdv: string } | null> {
+  const networks = getNetworkPriority(address);
+
+  for (const network of networks) {
+    try {
+      logger.info(`Trying to fetch price for ${address} on ${network}`);
+      const result = await fetchPrice(network, address);
+      if (result) {
+        logger.info(`Successfully fetched price for ${address} on ${network}`);
+        return result;
+      }
+    } catch (error) {
+      logger.warn(`Failed to fetch price for ${address} on ${network}: ${error}`);
+    }
+  }
+
+  logger.warn(`Failed to fetch price for ${address} on all networks: ${networks.join(", ")}`);
+  return null;
 }
