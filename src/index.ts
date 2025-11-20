@@ -6,9 +6,12 @@ import { getAddressInfo, getMessageLink } from "./utils";
 import { channelIds, rawChannels } from "./channels";
 import { RodFusWalletsChannel } from "./channels/rod-fus-wallets";
 import { MoniXSmartAlphaChannel } from "./channels/moni-x-smart-alpha";
+import { AltfinsAnalyticsChannel } from "./channels/altfins-analytics";
 import { getMention } from "./message/get-mention";
 import { getEmbed } from "./message/embed/get-embed";
 import { fetchPriceWithRetry } from "./api";
+import { fetchAltfinsAnalysis } from "./api/altfins";
+import { createAltfinsAnalysisEmbed } from "./message/embed/altfins-embed";
 import {
   HighConviction,
   EarlyAlpha,
@@ -27,6 +30,16 @@ client.on("messageCreate", async (message: Message) => {
   logger.info(
     `Message received ${message.id} at channel ${message.channel.id}`
   );
+
+  // Early return for Altfins channel
+  if (message.channel.id === AltfinsAnalyticsChannel.channelId) {
+    try {
+      await handleAltfinsMessage(message);
+    } catch (e) {
+      logger.error(`Error handling Altfins message: ${e}`);
+    }
+    return; // Don't process further
+  }
 
   if (!channelIds.includes(message.channel.id)) {
     logger.info(`Unknown channel ${message.channel.id}`);
@@ -135,4 +148,38 @@ function runStrategy(
     return true;
   }
   return false;
+}
+
+/**
+ * Handle messages in Altfins Analytics channel
+ */
+async function handleAltfinsMessage(message: Message) {
+  const command = AltfinsAnalyticsChannel.parseCommand(message);
+
+  if (!command) {
+    // Not a valid command - ignore silently
+    logger.info(`Not an Altfins command in message ${message.id}: "${message.content}"`);
+    return;
+  }
+
+  logger.info(`Processing Altfins analysis command with params: ${JSON.stringify(command.params)}`);
+
+  // Fetch data from Altfins API
+  const data = await fetchAltfinsAnalysis(command.params);
+
+  if (!data) {
+    logger.error(`Failed to fetch Altfins analysis for message ${message.id}`);
+    await message.reply("❌ Unable to fetch analysis data. Please try again later.");
+    return;
+  }
+
+  // Create and send embed
+  const embed = createAltfinsAnalysisEmbed(data, command.params);
+
+  try {
+    await message.reply({ embeds: [embed] });
+    logger.info(`Successfully sent Altfins analysis response for message ${message.id}`);
+  } catch (error) {
+    logger.error(`Error sending Altfins response: ${error}`);
+  }
 }

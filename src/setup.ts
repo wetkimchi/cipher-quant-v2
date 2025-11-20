@@ -35,3 +35,9 @@ if (!process.env.DISCORD_TOKEN) {
   logger.error("DISCORD_TOKEN is not set");
   process.exit(1);
 }
+
+// Validate Altfins credentials
+if (!process.env.ALTFINS_EMAIL || !process.env.ALTFINS_PASSWORD) {
+  logger.error("ALTFINS_EMAIL or ALTFINS_PASSWORD is not set");
+  process.exit(1);
+}

@@ -5,6 +5,7 @@ import { RodFusWalletsChannel } from "./rod-fus-wallets";
 import { MoniCuratedTokensChannel } from "./moni-curated-tokens";
 import { MoniRawTokensChannel } from "./moni-raw-tokens";
 import { SolMicrocapAlertsChannel } from "./sol-microcap-alerts";
+import { AltfinsAnalyticsChannel } from "./altfins-analytics";
 import { RawTokenInfo } from "./common/nansen";
 
 export type Channel = {
@@ -22,6 +23,7 @@ export const rawChannels: Record<string, Channel> = {
   [MoniCuratedTokensChannel.channelId]: MoniCuratedTokensChannel,
   [MoniRawTokensChannel.channelId]: MoniRawTokensChannel,
   [MoniXSmartAlphaChannel.channelId]: MoniXSmartAlphaChannel,
+  [AltfinsAnalyticsChannel.channelId]: AltfinsAnalyticsChannel,
 };
 
 export const channelIds = Object.keys(rawChannels);
