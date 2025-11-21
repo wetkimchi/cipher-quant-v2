@@ -54,14 +54,14 @@ async function getValidToken(): Promise<string | null> {
 }
 
 /**
- * Build query string from params
+ * Build query string from params with defaults
  */
 function buildQueryString(params: AltfinsAnalysisParams): string {
   const queryParams = new URLSearchParams();
   queryParams.append('symbol', params.symbol);
-  queryParams.append('page', '0');
-  queryParams.append('size', '100');
-  queryParams.append('sort', 'updatedDate,DESC');
+  queryParams.append('page', (params.page ?? 0).toString());
+  queryParams.append('size', (params.size ?? 100).toString());
+  queryParams.append('sort', params.sort ?? 'updatedDate,DESC');
   return queryParams.toString();
 }
 
@@ -130,6 +130,156 @@ export async function fetchAltfinsAnalysis(
     return data;
   } catch (error) {
     logger.error(`Error fetching Altfins analysis: ${error}`);
+    return null;
+  }
+}
+
+/**
+ * Fetch analytics history from Altfins
+ */
+export async function fetchAltfinsAnalytics(
+  params: AltfinsAnalyticsParams
+): Promise<AltfinsAnalyticsResponse | null> {
+  try {
+    const token = await getValidToken();
+    if (!token) {
+      logger.error("Failed to get valid Altfins token");
+      return null;
+    }
+
+    // Calculate default dates if not provided
+    const now = new Date();
+    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+    const requestBody = {
+      symbol: params.symbol,
+      timeInterval: params.timeInterval ?? 'DAILY',
+      analyticsType: params.analyticsType ?? 'SMA10',
+      from: params.from ?? thirtyDaysAgo.toISOString(),
+      to: params.to ?? now.toISOString(),
+    };
+
+    const url = `${ALTFINS_BASE_URL}/public/analytics/search-requests`;
+
+    logger.info(`Fetching Altfins analytics with params: ${JSON.stringify(requestBody)}`);
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    if (!response.ok) {
+      // If 401, try re-authenticating once
+      if (response.status === 401) {
+        logger.warn("Altfins token expired, re-authenticating...");
+        cachedAccessToken = null;
+        const newToken = await getValidToken();
+
+        if (!newToken) {
+          return null;
+        }
+
+        // Retry with new token
+        const retryResponse = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${newToken}`,
+          },
+          body: JSON.stringify(requestBody),
+        });
+
+        if (!retryResponse.ok) {
+          logger.error(`Altfins API error after retry: ${retryResponse.status}`);
+          return null;
+        }
+
+        const data: AltfinsAnalyticsResponse = await retryResponse.json();
+        logger.info(`Successfully fetched Altfins analytics (after retry): ${data.numberOfElements} results`);
+        return data;
+      }
+
+      logger.error(`Altfins API error: ${response.status} ${response.statusText}`);
+      return null;
+    }
+
+    const data: AltfinsAnalyticsResponse = await response.json();
+    logger.info(`Successfully fetched Altfins analytics: ${data.numberOfElements} results`);
+    return data;
+  } catch (error) {
+    logger.error(`Error fetching Altfins analytics: ${error}`);
+    return null;
+  }
+}
+
+/**
+ * Fetch available analytics types from Altfins
+ */
+export async function fetchAltfinsAnalyticsTypes(): Promise<AltfinsAnalyticsType[] | null> {
+  try {
+    const token = await getValidToken();
+    if (!token) {
+      logger.error("Failed to get valid Altfins token");
+      return null;
+    }
+
+    const url = `${ALTFINS_BASE_URL}/public/analytics/types`;
+
+    logger.info(`Fetching Altfins analytics types: ${url}`);
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'accept': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      // If 401, try re-authenticating once
+      if (response.status === 401) {
+        logger.warn("Altfins token expired, re-authenticating...");
+        cachedAccessToken = null;
+        const newToken = await getValidToken();
+
+        if (!newToken) {
+          return null;
+        }
+
+        // Retry with new token
+        const retryResponse = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'accept': 'application/json',
+            'Authorization': `Bearer ${newToken}`,
+          },
+        });
+
+        if (!retryResponse.ok) {
+          logger.error(`Altfins API error after retry: ${retryResponse.status}`);
+          return null;
+        }
+
+        const data: AltfinsAnalyticsType[] = await retryResponse.json();
+        logger.info(`Successfully fetched Altfins analytics types (after retry): ${data.length} types`);
+        return data;
+      }
+
+      logger.error(`Altfins API error: ${response.status} ${response.statusText}`);
+      return null;
+    }
+
+    const data: AltfinsAnalyticsType[] = await response.json();
+    logger.info(`Successfully fetched Altfins analytics types: ${data.length} types`);
+    return data;
+  } catch (error) {
+    logger.error(`Error fetching Altfins analytics types: ${error}`);
     return null;
   }
 }

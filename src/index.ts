@@ -10,8 +10,8 @@ import { AltfinsAnalyticsChannel } from "./channels/altfins-analytics";
 import { getMention } from "./message/get-mention";
 import { getEmbed } from "./message/embed/get-embed";
 import { fetchPriceWithRetry } from "./api";
-import { fetchAltfinsAnalysis } from "./api/altfins";
-import { createAltfinsAnalysisEmbed } from "./message/embed/altfins-embed";
+import { fetchAltfinsAnalysis, fetchAltfinsAnalytics, fetchAltfinsAnalyticsTypes } from "./api/altfins";
+import { createAltfinsAnalysisEmbed, createAltfinsAnalyticsEmbed, createAltfinsAnalyticsTypesEmbed } from "./message/embed/altfins-embed";
 import {
   HighConviction,
   EarlyAlpha,
@@ -162,24 +162,70 @@ async function handleAltfinsMessage(message: Message) {
     return;
   }
 
-  logger.info(`Processing Altfins analysis command with params: ${JSON.stringify(command.params)}`);
+  if (command.type === 'list') {
+    // Fetch analytics types
+    logger.info(`Processing Altfins list command`);
 
-  // Fetch data from Altfins API
-  const data = await fetchAltfinsAnalysis(command.params);
+    const types = await fetchAltfinsAnalyticsTypes();
 
-  if (!data) {
-    logger.error(`Failed to fetch Altfins analysis for message ${message.id}`);
-    await message.reply("❌ Unable to fetch analysis data. Please try again later.");
+    if (!types) {
+      logger.error(`Failed to fetch Altfins analytics types for message ${message.id}`);
+      await message.reply("❌ Unable to fetch analytics types. Please try again later.");
+      return;
+    }
+
+    // Create and send embeds (may be multiple)
+    const embeds = createAltfinsAnalyticsTypesEmbed(types);
+
+    try {
+      await message.reply({ embeds });
+      logger.info(`Successfully sent Altfins analytics types response (${embeds.length} embeds) for message ${message.id}`);
+    } catch (error) {
+      logger.error(`Error sending Altfins response: ${error}`);
+    }
     return;
   }
 
-  // Create and send embed
-  const embed = createAltfinsAnalysisEmbed(data, command.params);
+  const symbol = command.type === 'analysis' ? command.params.symbol : command.params.symbol;
+  logger.info(`Processing Altfins ${command.type} command with symbol: ${symbol}`);
 
-  try {
-    await message.reply({ embeds: [embed] });
-    logger.info(`Successfully sent Altfins analysis response for message ${message.id}`);
-  } catch (error) {
-    logger.error(`Error sending Altfins response: ${error}`);
+  if (command.type === 'analysis') {
+    // Fetch technical analysis data
+    const data = await fetchAltfinsAnalysis(command.params);
+
+    if (!data) {
+      logger.error(`Failed to fetch Altfins analysis for message ${message.id}`);
+      await message.reply("❌ Unable to fetch analysis data. Please try again later.");
+      return;
+    }
+
+    // Create and send embed
+    const embed = createAltfinsAnalysisEmbed(data, command.params);
+
+    try {
+      await message.reply({ embeds: [embed] });
+      logger.info(`Successfully sent Altfins analysis response for message ${message.id}`);
+    } catch (error) {
+      logger.error(`Error sending Altfins response: ${error}`);
+    }
+  } else if (command.type === 'analytics') {
+    // Fetch analytics history data
+    const data = await fetchAltfinsAnalytics(command.params);
+
+    if (!data) {
+      logger.error(`Failed to fetch Altfins analytics for message ${message.id}`);
+      await message.reply("❌ Unable to fetch analytics data. Please try again later.");
+      return;
+    }
+
+    // Create and send embed
+    const embed = createAltfinsAnalyticsEmbed(data, command.params.symbol);
+
+    try {
+      await message.reply({ embeds: [embed] });
+      logger.info(`Successfully sent Altfins analytics response for message ${message.id}`);
+    } catch (error) {
+      logger.error(`Error sending Altfins response: ${error}`);
+    }
   }
 }
